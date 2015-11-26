@@ -20,7 +20,9 @@ var IMAGES_CSS = [
   'img/page-bg-noise-05.png',
   'img/page-bg-noise-06.png',
   'img/page-bg-noise-07.png',
-  'img/web-background.jpg'
+  'img/web-background.jpg',
+  'img/gen/venn/venndiagram.svg',
+  'img/gen/venn/legend.svg'
 ];
 
 async.parallel([
