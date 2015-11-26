@@ -12,6 +12,16 @@ var DEST_IMG = './img/';
 var DEST_CSS = './css/';
 var DEST_JS = './js/';
 var DEST_ROOT = './';
+var IMAGES_CSS = [
+  'img/page-bg-noise-01.png',
+  'img/page-bg-noise-02.png',
+  'img/page-bg-noise-03.png',
+  'img/page-bg-noise-04.png',
+  'img/page-bg-noise-05.png',
+  'img/page-bg-noise-06.png',
+  'img/page-bg-noise-07.png',
+  'img/web-background.jpg'
+];
 
 async.parallel([
 
@@ -79,6 +89,9 @@ async.parallel([
     images.push($(this).attr('src'));
 
   });
+
+  // add css images:
+  images = images.concat(IMAGES_CSS);
 
   // download each image
 

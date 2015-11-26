@@ -3,6 +3,7 @@ node_modules/
 
 img/**/*.svg
 img/**/*.png
+img/**/*.jpg
 css/**/*.css
 js/**/*.js
 index.html
