@@ -8,88 +8,102 @@ var Download = require('download');
 var cheerio = require('cheerio');
 
 var ROOT = 'http://www.bombmanual.com/manual/1/html/';
-var DEST_IMG = './public/img/';
-var DEST_CSS = './public/css/';
-var DEST_JS = './public/js/';
+var DEST_IMG = './img/';
+var DEST_CSS = './css/';
+var DEST_JS = './js/';
+var DEST_ROOT = './';
 
-var INDEX = fs.readFileSync('./public/index.html', 'utf8');
+async.parallel([
 
-var $ = cheerio.load(INDEX);
-var images = [];
+  // index.html
 
-// estrazione immagini dal file HTML
+  function(cb) {
 
-$('img').each(function(index, image) {
+    console.log('Downloading:', ROOT + 'index.html');
 
-  images.push($(this).attr('src'));
+    new Download()
+      .get(ROOT + 'index.html')
+      .dest(DEST_ROOT)
+      .run(cb);
+  },
 
-});
+  // CSS
 
-// per ogni immagine, avvio un downloader che la salva nella dest giusta
+  function(cb) {
 
-async.each(images, function(image, cb) {
+    console.log('Downloading:', ROOT + 'css/normalize.css');
+    console.log('Downloading:', ROOT + 'css/main.css');
 
-  var img = ROOT + image;
-  var path = image.split('/').slice(1);
+    new Download()
+      .get(ROOT + 'css/normalize.css')
+      .get(ROOT + 'css/main.css')
+      .dest(DEST_CSS)
+      .run(cb);
+  },
 
-  path = path.slice(0, path.length -1).join('/');
+  // JS
 
-  console.log('Downloading:', img, 'in:', path);
+  function(cb) {
 
-  new Download()
-    .get(img)
-    .dest(DEST_IMG + path)
-    .run(cb);
+    console.log('Downloading:', ROOT + 'js/main.js');
 
-}, function(err) {
+    new Download()
+      .get(ROOT + 'js/main.js')
+      .dest(DEST_JS)
+      .run(cb);
+  },
 
-  if (err) throw err;
+  function(cb) {
 
-  // Completate le immagini, avvio download file accessori (css, js)
+    console.log('Downloading:', ROOT + 'js/vendor/jquery-1.11.0.min.js');
 
-  async.parallel([
+    new Download()
+      .get(ROOT + 'js/vendor/jquery-1.11.0.min.js')
+      .dest(DEST_JS + 'vendor/')
+      .run(cb);
+  }
 
-    // CSS
+], function() {
 
-    function(cb) {
+  console.log('Done downloading main files');
 
-      console.log('Downloading:', ROOT + 'css/normalize.css');
-      console.log('Downloading:', ROOT + 'css/main.css');
+  var INDEX = fs.readFileSync('./index.html', 'utf8');
 
-      new Download()
-        .get(ROOT + 'css/normalize.css')
-        .get(ROOT + 'css/main.css')
-        .dest(DEST_CSS)
-        .run(cb);
-    },
+  var $ = cheerio.load(INDEX);
+  var images = [];
 
-    // JS
+  // extracting images from file HTML
 
-    function(cb) {
+  $('img').each(function(index, image) {
 
-      console.log('Downloading:', ROOT + 'js/main.js');
+    images.push($(this).attr('src'));
 
-      new Download()
-        .get(ROOT + 'js/main.js')
-        .dest(DEST_JS)
-        .run(cb);
-    },
+  });
 
-    function(cb) {
+  // download each image
 
-      console.log('Downloading:', ROOT + 'js/vendor/jquery-1.11.0.min.js');
+  async.each(images, function(image, cb) {
 
-      new Download()
-        .get(ROOT + 'js/vendor/jquery-1.11.0.min.js')
-        .dest(DEST_JS + 'vendor/')
-        .run(cb);
-    }
+    var img = ROOT + image;
+    var path = image.split('/').slice(1);
 
-  ], function() {
+    path = path.slice(0, path.length -1).join('/');
 
-    console.log('Done');
+    console.log('Downloading:', img, 'in:', path);
+
+    new Download()
+      .get(img)
+      .dest(DEST_IMG + path)
+      .run(cb);
+
+  }, function(err) {
+
+    if (err) throw err;
+
+    console.log('Done!');
     process.exit(0);
 
   });
 
 });
+
