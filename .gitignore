@@ -1,0 +1,7 @@
+.idea/
+node_modules/
+
+img/**/*.svg
+img/**/*.png
+css/**/*.css
+js/**/*.js
